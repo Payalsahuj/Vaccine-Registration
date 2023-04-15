@@ -1,12 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: black;
+            color: white;
+
+        }
+
+        #mainsection {
+            width: 80%;
+            margin: auto;
+
+        }
+
+        th {
+            padding-bottom: 20px;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border: 2px solid blanchedalmond;
+            text-align: left;
+        }
+        .filter{
+            margin-bottom: 20px;
+            padding: 7px 10px;
+            background-color: rgb(205, 255, 224);
+        }
+    </style>
 </head>
+
 <body>
-    
+    <a href="./dashboard1.html" style="color: white;">Dashboard</a>
+    <a href="./register1.html" style="color: white;">registration</a>
+    <div id="mainsection">
+        <h2 style="padding-bottom:20px;">List of vaccinated people</h2>
+        <button class="filter" id="age">Sort by age</button>
+        <select class="filter" id="age">
+            <option value="">--sort by vaccine--</option>
+            <option value="">Covaxin</option>
+            <option value="">Sputnik</option>
+            <option value="">Covishield</option>
+             </select>
+            <select class="filter" id="prio">
+                <option value="">--sort by priority--</option>
+                <option value="">p0</option>
+                <option value="">p1</option>
+                <option value="">p2</option>
+                <option value="">p3</option>
+            </select>
+        <table>
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>AGE</th>
+                    <th>DESIGNATION</th>
+                    <th>VACCINE</th>
+                    <th>PRIORITY</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
 </body>
+
 </html>
+
+<script>
+    let vacdata = JSON.parse(localStorage.getItem("vaccinated")) || [];
+
+    let vacbtn = document.getElementById("vac");
+    let agebtn = document.getElementById("age");
+    let priobtn = document.getElementById("prio");
+    let tbody = document.querySelector("tbody");
+    function create(cardlist) {
+        tbody.innerHTML = null;
+        cardlist.forEach((item, index) => {
+            let tr = document.createElement("tr");
+            tr.style.fontSize = "20px";
+            let td1 = document.createElement("td");
+            td1.innerText = item.name;
+            let td2 = document.createElement("td");
+            td2.innerText = item.age;
+            let td3 = document.createElement("td");
+            td3.innerText = item.desig;
+            let td4 = document.createElement("td");
+            td4.innerText = item.vaccine;
+            let td5 = document.createElement("td");
+            td5.innerText = item.prio;
+
+            tr.append(td1, td2, td3, td4, td5);
+            tbody.append(tr)
+
+        })
+    }
+    create(vacdata)
+
+    function sortage(cardlist) {
+        agebtn.addEventListener("click", () => {
+            if (cardlist && cardlist.length) {
+                cardlist.sort((a, b) => a.age - b.age)
+                create(cardlist)
+            }
+            else {
+                console.log("error")
+            }
+        })
+
+    }
+    sortage(vacdata)
+</script>

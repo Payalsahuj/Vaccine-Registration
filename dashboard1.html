@@ -1,12 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: black;
+            color: white;
+
+        }
+
+        #mainsection {
+            width: 80%;
+            margin: auto;
+
+        }
+
+        th {
+            padding-bottom: 20px;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border: 2px solid blanchedalmond;
+            text-align: left;
+
+        }
+
+        .popup {
+            text-align: center;
+            width: 400px;
+            background: black;
+            border-radius: 6px;
+            position: absolute;
+            border: 2px solid red;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            padding: 15px 0px;
+            visibility: hidden;
+            transition: transform 0.4s, top 0.4s;
+        }
+
+        #otp {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .o {
+            width: 40px;
+            height: 40px;
+            font-size: 25px;
+            
+        }
+
+        .open-popup {
+            visibility: visible;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(1)
+        }
+        .filter{
+            margin-bottom: 20px;
+            padding: 7px 10px;
+            background-color: rgb(205, 255, 224);
+        }
+    </style>
 </head>
+
 <body>
-    
+    <a href="./register1.html" style="color: white;">registration</a>
+    <a href="./vaccinated1.html" style="color: white;">vaccinated</a>
+    <div id="mainsection">
+        <h2 style="padding-bottom:20px;">List of registered people</h2>
+        <button class="filter" id="age">Sort by age</button>
+        <select class="filter" id="vac">
+            <option value="">--sort by vaccine--</option>
+            <option value="Covaxin">Covaxin</option>
+            <option value="Sputnik">Sputnik</option>
+            <option value="Covishield">Covishield</option>
+             </select>
+            <select class="filter" id="prio">
+                <option value="">--sort by priority--</option>
+                <option value="p0">p0</option>
+                <option value="p1">p1</option>
+                <option value="p2">p2</option>
+                <option value="p3">p3</option>
+            </select>
+        <table>
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>AGE</th>
+                    <th>DESIGNATION</th>
+                    <th>VACCINE</th>
+                    <th>PRIORITY</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="popup" id="popup">
+        <h2>Enter your OTP</h2>
+        <div id="otp">
+            <input class="o" id="first" type="text" maxlength="1">
+            <input class="o" id="second" type="text" maxlength="1">
+            <input class="o" id="third" type="text" maxlength="1">
+            <input class="o" id="fourth" type="text" maxlength="1">
+            
+        </div>
+        <button id="check" style="padding: 5px 10px; margin-top:10px; font-size: 20px;">Enter</button>
+    </div>
 </body>
+
 </html>
+<script>
+    
+
+    let cardlist = JSON.parse(localStorage.getItem("listofpeople")) || [];
+    let vacdata = JSON.parse(localStorage.getItem("vaccinated")) || [];
+ 
+    let agebtn=document.getElementById("age");
+    let tbody = document.querySelector("tbody");
+    function create(cardlist) {
+        tbody.innerHTML = null;
+        cardlist.forEach((item, index) => {
+            let tr = document.createElement("tr");
+            tr.style.fontSize = "20px";
+            let td1 = document.createElement("td");
+            td1.innerText = item.name;
+            let td2 = document.createElement("td");
+            td2.innerText = item.age;
+            let td3 = document.createElement("td");
+            td3.innerText = item.desig;
+            let td4 = document.createElement("td");
+            td4.innerText = item.vaccine;
+            let td5 = document.createElement("td");
+            td5.innerText = item.prio;
+            let td6 = document.createElement("td");
+            let delbut = document.createElement("button");
+            delbut.style.background = "red";
+            delbut.style.padding = "5px 20px";
+            delbut.style.fontSize = "20px";
+            delbut.innerText = "Delete";
+            td6.append(delbut)
+            // ----------------------------deleting part---------------------------------
+            delbut.addEventListener("click", () => {
+                let deleted = cardlist.filter(function (el, i) {
+                    if (i === index) {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+
+                })
+
+                cardlist = deleted;
+                localStorage.setItem("listofpeople", JSON.stringify(cardlist))
+                create(cardlist)
+            })
+            let td7 = document.createElement("td");
+            let vacbut = document.createElement("button");
+
+            vacbut.style.background = "green";
+            vacbut.style.padding = "5px 20px";
+            vacbut.style.fontSize = "20px";
+            vacbut.innerText = "Vaccinate";
+            td7.append(vacbut)
+
+            vacbut.addEventListener("click", () => {
+                let popup = document.getElementById("popup");
+                popup.style.visibility = "visible";
+                popup.style.top = "50%";
+                popup.style.transform = "translate(-50%,-50%) scale(1)";
+                alert(`Your OTP is: ${item.OTP}`)
+                document.getElementById("check").addEventListener("click", () => {
+                    let first = document.getElementById("first").value
+                    let second = document.getElementById("second").value
+                    let third = document.getElementById("third").value
+                    let fourth = document.getElementById("fourth").value
+                    let inputotp = first + second + third + fourth;
+                    if (inputotp == item.OTP) {
+                       
+                        let deleted = cardlist.filter(function (el, i) {
+                            if (i === index) {
+
+                                vacdata.push(el)
+                                localStorage.setItem("vaccinated", JSON.stringify(vacdata))
+                                
+                                
+                                setTimeout(function(){
+                                    alert(`${el.name} Added to Queue`)
+                                },0)
+                                setTimeout(function(){
+                                    alert(`Vaccinating ${el.name}`)
+                                },5000)
+                                setTimeout(function(){
+                                    alert(`${el.name} Vaccinated `)
+                                    window.location.href='./vaccinated1.html';
+                                },10000);
+
+                                
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        })
+                        cardlist = deleted;
+                        localStorage.setItem("listofpeople", JSON.stringify(cardlist))
+                        
+                        popup.style.visibility = "hidden";
+                        
+                    }
+                    else{
+                        popup.style.visibility = "hidden";
+                        alert("Wrong OTP")
+                        
+                    }
+                })
+
+            })
+
+          
+
+            tr.append(td1, td2, td3, td4, td5, td6, td7);
+            tbody.append(tr)
+
+        })
+    }
+    create(cardlist)
+
+
+    function sortage(cardlist){
+    agebtn.addEventListener("click",()=>{
+    if(cardlist && cardlist.length){
+        cardlist.sort((a,b)=> a.age-b.age)
+        create(cardlist)
+    }
+    else{
+        console.log("error")
+    }
+    })
+  
+}
+sortage(cardlist)
+
+
+
+
+let priobtn=document.getElementById("prio");
+let prioarray=cardlist;
+function filterprio(prioarray){
+    priobtn.addEventListener("change",()=>{
+    prioarray=cardlist;
+    let val=priobtn.value;
+    if(val=="p0"){
+        prioarray=prioarray.filter((element)=> element.prio=="p0");
+        
+        console.log(prioarray)
+        
+        create(prioarray)
+    }
+    else if(val=="p1"){
+        prioarray=prioarray.filter((element)=> element.prio=="p1")
+        create(prioarray)
+    }
+    else if(val=="p2"){
+        prioarray=prioarray.filter((element)=> element.prio=="p2")
+        create(prioarray)
+    }
+    else if(val=="p3"){
+        prioarray=prioarray.filter((element)=> element.prio=="p3")
+        create(prioarray)
+    }
+})
+}
+filterprio(prioarray)
+
+    
+
+
+
+let vacbtn=document.getElementById("vac");
+vacarray=cardlist;
+function filtervac(vacarray){
+    vacbtn.addEventListener("change",()=>{
+    vacarray=cardlist;
+    let val=vacbtn.value;
+    if(val=="Covaxin"){
+        vacarray=prioarray.filter((element)=> element.vaccine=="Covaxin");
+        create(vacarray)
+    }
+    else if(val=="Sputnik"){
+        vacarray=vacarray.filter((element)=> element.vaccine=="Sputnik")
+        create(vacarray)
+    }
+    else if(val=="Covishield"){
+        vacarray=vacarray.filter((element)=> element.vaccine=="Covishield")
+        create(vacarray)
+    }
+   
+})
+}
+filtervac(vacarray)
+
+</script>
