@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: black;
+            color: white;
+            
+        }
+        #mainsection{
+            width: 80%;
+            margin: auto;
+        }
+        h1{
+            text-align: center;
+        }
+        
+        .common{
+           margin-right: 40px;
+            width: 360px;
+            height: 30px;
+            padding-left: 10px;
+        }
+       
+    </style>
+</head>
+<body>
+    <a href="./dashboard1.html" style="color: white;">registration</a>
+    <div id="mainsection">
+    <h1 style="color: red;">Vaccine Registration Form</h1>
+    <hr>
+    <form action="" id="form">
+        <p>Your ID</p>
+        <input type="text" id="uniqueid">
+        <p>Name</p>
+        <input type="text" id="firstname" class="common" placeholder="firstname">
+        
+        <input type="text" id="lastname" class="common" placeholder="lastname">
+        <br>
+        <span id="dispn">*Should contain at least 4 characters*</span>
+        <p>Age</p>
+        <input type="number"class="common" placeholder="Age" id="age">
+        <br>
+        <span id="dispa">*Age should be between 18 to 40*</span>
+        <p>Designation</p>
+        <input type="radio" name="gen" id="Employee"  value="Employee"> Employee <br>
+        <input type="radio" name="gen" id="Student" value="Student"> Student<br>
+        <p>Available vaccines</p>
+        <select name="" class="common" id="vaccine" style="margin-right: 60px;">
+            <option>Vaccine</option>
+            <option value="Covishield">Covishield</option>
+            <option value="Covaxin">Covaxin</option>
+            <option value="Sputnik">Sputnik</option>
+            </select>
+            
+        <select name="" class="common" id="priority">
+            <option>Priority list</option>
+            <option value="p0">p0</option>
+            <option value="p1">p1</option>
+            <option value="p2">p2</option>
+            <option value="p3">p3 </option>
+            </select>
+       
+        <br><br>
+        <input type="submit" id="submit">
+    </form>
+    </div>
+</body>
+</html>
+<script>
+    
+    var general=document.querySelectorAll("input[name='gen']");
+      var vaccine=document.getElementById("vaccine");
+      var pro=document.getElementById("priority");
+      
+      let cardlist=JSON.parse(localStorage.getItem("listofpeople")) || [];
+
+     document.getElementById("form").addEventListener("submit",(event)=>{
+        event.preventDefault();
+        // generating otp with the help of Math.random
+        const generateOTP = (length = 4) => {
+        let otp = '';
+        for (let i = 0; i < length; i++) {
+        otp += Math.floor(Math.random() * 10)
+        }
+        return otp
+        }
+        var value=vaccine.options[vaccine.selectedIndex].text;
+        var priovalue=pro.options[pro.selectedIndex].text
+        let check=document.querySelector("input[name='gen']:checked").value;
+        let dispa=document.getElementById("dispa");
+        let dispn=document.getElementById("dispn");
+        if(form.age.value>=18 && form.age.value<=40 && form.firstname.value.length>=4){
+            dispa.style.color="white";
+            dispn.style.color="white";
+        let list={
+            name:form.firstname.value+" "+form.lastname.value,
+            age:form.age.value,
+            desig:check,
+            vaccine:value,
+            prio:priovalue,
+            OTP: generateOTP()
+
+        }
+        
+       cardlist.push(list)
+       localStorage.setItem("listofpeople",JSON.stringify(cardlist))
+      window.location.href='./dashboard1.html'
+        }
+        
+        else if(form.age.value<18 && form.firstname.value.length < 4){
+            dispn.style.color="red";
+            dispa.style.color="red";
+            alert("Wrong credentials")
+        }
+        else if(form.age.value>40 && form.firstname.value.length < 4){
+            dispn.style.color="red";
+            dispa.style.color="red";
+            alert("Wrong credentials")
+        }
+        else if(form.age.value<18 || form.age.value>40){
+            dispa.style.color="red";
+            dispn.style.color="white";
+            alert("Age should be between 18 to 40")
+        }
+        else if(form.firstname.value.length<4){
+            dispn.style.color="red";
+            dispa.style.color="white";
+            alert("Name should contain at least 4 characters")
+        }
+     })
+     JSON.parse(localStorage.getItem("listofpeople"))
+</script>
